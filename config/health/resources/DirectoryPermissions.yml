@@ -1,0 +1,12 @@
+name: Quyền ghi dữ liệu
+abbreviation: 3
+checker: PragmaRX\Health\Checkers\Writable
+notify: true
+column_size: 3
+error_message: "%s is not writable"
+targets:
+  - default:
+      paths:
+        - "{{ storage_path() }}"
+        - "{{ storage_path('logs') }}"
+        - "{{ base_path('bootstrap/cache') }}"

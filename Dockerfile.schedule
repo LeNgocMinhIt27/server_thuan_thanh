@@ -1,0 +1,58 @@
+FROM php:7.4.29-apache
+
+RUN apt update \
+  && apt install -y \
+  g++ \
+  libicu-dev \
+  libpq-dev \
+  libzip-dev \
+  libpng-dev \
+  zip \
+  zlib1g-dev \
+  libcurl4-openssl-dev \
+  pkg-config \
+  libssl-dev \
+  supervisor \
+  gdal-bin \
+  default-jre \
+  default-jdk
+
+RUN apt install -y nano
+
+
+RUN docker-php-ext-install intl \
+  opcache \
+  pdo \
+  pdo_pgsql \
+  pgsql \
+  zip
+
+RUN docker-php-ext-configure gd && docker-php-ext-install -j$(nproc) gd
+
+RUN apt-get install -y postgresql-client
+RUN pecl install --force redis
+
+COPY php/php.ini /usr/local/etc/php/php.ini
+
+WORKDIR /var/www/
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+WORKDIR /var/www/web-server
+COPY composer.json composer.json
+RUN composer install --no-scripts --no-autoloader
+
+COPY docker-schedule.sh /var/www/docker-schedule.sh
+RUN ["chmod", "+x", "/var/www/docker-schedule.sh"]
+
+COPY docker.env .env
+COPY . .
+
+
+RUN composer dump
+RUN php artisan key:generate --force
+
+RUN chmod -R 755 public storage/ bootstrap/
+RUN chown -R www-data ./bootstrap
+RUN chown -R www-data ./storage
+RUN chown -R www-data ./public

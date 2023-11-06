@@ -1,0 +1,16 @@
+{
+    "editor.tabSize": 4,
+    "[php]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+    },
+    "php.problems.exclude": {
+        "vendor/": true,
+        "public/base-map": true,
+        "_ide_helper.php": true,
+        "_ide_helper_models.php": true
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    }
+}
